@@ -8,12 +8,52 @@ npm run build
 npm start
 
 ------for backend dev---------
+
+```bash
 yarn
+```
+
+```bash
 yarn run dev
+```
+
+in this project server.ts is in a sub-folder src>server.ts so correct the package.json file
+
+```bash
+"scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+  },
+```
+
+---
+
+In postman create a new GET request to
+
+```bash
+http://localhost:7001/test
+```
+
+it responses like as output as
+
+```bash
+{
+    "success": true,
+    "message": "Api is working well"
+}
+```
+
+then the api works well
 
 --------for backend production------
+
+```bash
 yarn
+```
+
+```bash
 yarn run build
+```
+
 yarn start
 
 ---
