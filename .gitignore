@@ -2,3 +2,4 @@
 my-data/
 database/
 eticket-be/.env
+node_modules/
