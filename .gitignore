@@ -3,3 +3,8 @@ my-data/
 database/
 eticket-be/.env
 node_modules/
+.DS_Store
+eticket-be/.DS_Store
+eticket-be/src/.DS_Store
+frontend/.DS_Store
+frontend/src/.DS_Store
