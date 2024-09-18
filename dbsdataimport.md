@@ -81,6 +81,16 @@ By following these steps, you’ll ensure that your MongoDB instance is fully in
   docker cp ./db/eticket.trips.json mongodb:/tmp/eticket.trips.json
 ```
 
+or
+
+```bash
+
+  docker cp ./db/eticket.buses.json mongo_db:/tmp/eticket.buses.json
+  docker cp ./db/eticket.routes.json mongo_db:/tmp/eticket.routes.json
+  docker cp ./db/eticket.users.json mongo_db:/tmp/eticket.users.json
+  docker cp ./db/eticket.trips.json mongo_db:/tmp/eticket.trips.json
+```
+
 - Connect to the MongoDB container and import the data using mongoimport:
 
 ```bash
@@ -88,6 +98,13 @@ docker exec -it mongodb mongoimport --db eticket --collection buses --file /tmp/
 docker exec -it mongodb mongoimport --db eticket --collection users --file /tmp/eticket.users.json --jsonArray
 docker exec -it mongodb mongoimport --db eticket --collection trips --file /tmp/eticket.trips.json --jsonArray
 docker exec -it mongodb mongoimport --db eticket --collection routes --file /tmp/eticket.routes.json --jsonArray
+```
+
+```bash
+docker exec -it mongo_db mongoimport --db eticket --collection buses --file /tmp/eticket.buses.json --jsonArray
+docker exec -it mongo_db mongoimport --db eticket --collection users --file /tmp/eticket.users.json --jsonArray
+docker exec -it mongo_db mongoimport --db eticket --collection trips --file /tmp/eticket.trips.json --jsonArray
+docker exec -it mongo_db mongoimport --db eticket --collection routes --file /tmp/eticket.routes.json --jsonArray
 ```
 
 If authentication problem arise:
@@ -99,6 +116,13 @@ docker exec -it mongodb mongoimport --db eticket --collection trips --file /tmp/
 docker exec -it mongodb mongoimport --db eticket --collection routes --file /tmp/eticket.routes.json --jsonArray --username shashi --password 431721 --authenticationDatabase admin
 ```
 
+```bash
+docker exec -it mongo_db mongoimport --db eticket --collection buses --file /tmp/eticket.buses.json --jsonArray --username shashi --password 431721 --authenticationDatabase admin
+docker exec -it mongo_db mongoimport --db eticket --collection users --file /tmp/eticket.users.json --jsonArray --username shashi --password 431721 --authenticationDatabase admin
+docker exec -it mongo_db mongoimport --db eticket --collection trips --file /tmp/eticket.trips.json --jsonArray --username shashi --password 431721 --authenticationDatabase admin
+docker exec -it mongo_db mongoimport --db eticket --collection routes --file /tmp/eticket.routes.json --jsonArray --username shashi --password 431721 --authenticationDatabase admin
+```
+
 If you're still encountering issues, you might want to manually verify the database and collections:
 
 Access MongoDB Shell:
@@ -106,6 +130,11 @@ Access MongoDB Shell:
 ```bash
 docker exec -it mongodb mongosh --username shashi --password 431721 --authenticationDatabase admin
 ```
+or
+```bash
+docker exec -it mongo_db mongosh --username shashi --password 431721 --authenticationDatabase admin
+```
+
 
 Verify Database and Collections:
 
@@ -238,3 +267,77 @@ db.users.insertMany(load('/tmp/eticket.users.json'))
 db.trips.insertMany(load('/tmp/eticket.trips.json'))
 db.routes.insertMany(load('/tmp/eticket.routes.json'))
 ```
+
+If no data is found at `http://localhost:8081/db/eticket/`, there are a few things you might need to check:
+
+### 1. **Verify MongoDB Data**
+
+Ensure that the MongoDB container actually contains data and that it's being used by your application:
+
+- **Access MongoDB Shell**:
+
+  ```sh
+  docker exec -it mongo_db mongosh -u "shashi" -p "431721" --authenticationDatabase "admin"
+  ```
+
+- **List Databases**:
+
+  ```sh
+  show dbs
+  ```
+
+- **Switch to the `eticket` Database**:
+
+  ```sh
+  use eticket
+  ```
+
+- **List Collections**:
+
+  ```sh
+  show collections
+  ```
+
+- **Check Data in Collections**:
+
+  ```sh
+  db.buses.find().pretty()
+  ```
+
+Replace `your_collection_name` with the actual collection names you see.
+
+### 2. **Verify Application Configuration**
+
+Ensure that the application (`eticketbe`) is correctly configured to connect to the MongoDB database:
+
+- **Database URL**: Check the configuration files or environment variables of the `eticketbe` application to ensure it’s pointing to the correct MongoDB instance.
+
+- **Data Initialization**: Make sure the application is properly initializing and populating data in MongoDB. Sometimes, applications need to run data migration or seeding scripts to populate the database.
+
+### 3. **Check Application Logs**
+
+Look at the logs for the `eticketbe` container to see if there are any errors or warnings related to database operations:
+
+```sh
+docker logs eticketbe
+```
+
+### 4. **Check API Endpoints**
+
+Ensure that the endpoint `http://localhost:8081/db/eticket/` is correctly implemented in your `eticketbe` service:
+
+- **Verify API Routes**: Check the backend code for the routes handling the `eticket` database requests. Ensure that these routes are set up correctly and are able to query the database.
+
+- **Inspect API Response**: Use a tool like Postman or `curl` to manually test the endpoint and see if there’s any additional information in the response.
+
+### 5. **Verify Container Connectivity**
+
+Ensure that the containers are properly networked and can communicate with each other:
+
+- **Network Check**: Verify that the `eticketbe` container can reach the `mongo_db` container. You can use `docker exec` to run network tests or other tools inside the containers.
+
+```sh
+docker exec -it eticketbe ping mongo_db
+```
+
+By following these steps, you should be able to diagnose why no data is found and address any issues with data connectivity or application configuration. If you find specific errors or issues, let me know, and I can help further!

@@ -47,8 +47,7 @@ app.use(cors(corsOptions));
 app.get("/test", (req: Request, res: Response) => {
   res.cookie("ac", "hi bro");
   res.status(200).json({
-    success: true,
-    message: "Api is working well",
+   
   });
 });
 
