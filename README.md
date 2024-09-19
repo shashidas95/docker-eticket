@@ -318,3 +318,50 @@ docker cp ./src/mailer 8749608e81ad:/app/build/mailer
 ```
 
 Successfully copied 4.61kB to 8749608e81ad:/app/build/mailer
+
+```bash
+FROM nginx:alpine
+
+COPY --from=builder /app/build  /usr/share/nginx/html
+
+COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+```bash
+FROM nginx
+
+COPY ./default.conf /etc/nginx/conf.d/default.conf
+```
+
+```bash
+upstream client{
+    server client:3000;
+}
+
+upstream api{
+    server api:5000;
+}
+
+server{
+    listen 80;
+
+    location / {
+        proxy_pass http://client;
+    }
+    location /ws {
+    proxy_pass http://client;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    }
+    location /api {
+        rewrite /api/(.*) /$1 break;
+        proxy_pass http://api;
+    }
+
+}
+```
