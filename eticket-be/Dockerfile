@@ -5,5 +5,6 @@ COPY package*.json ./
 RUN yarn
 COPY . .
 RUN yarn run build
+COPY src/mailer /app/build/mailer
 EXPOSE 7001
 CMD ["yarn", "start"]

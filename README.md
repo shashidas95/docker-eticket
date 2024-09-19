@@ -308,3 +308,13 @@ After editing, restart MongoDB with:
 ```bash
 brew services restart mongodb/brew/mongodb-community
 ```
+
+### if mailer is not copied in container during build then manually copy mailer folder to container
+
+eticket-be git:(phase2) ✗
+
+```bash
+docker cp ./src/mailer 8749608e81ad:/app/build/mailer
+```
+
+Successfully copied 4.61kB to 8749608e81ad:/app/build/mailer
