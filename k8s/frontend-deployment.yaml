@@ -2,34 +2,37 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-deployment
+  namespace: eticket
   labels:
     app: frontend
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
   template:
     metadata:
+      name: frontend
       labels:
         app: frontend
     spec:
       containers:
-        - name: eticketfe
-          image: shashidas/eticket:frontend-v2.0
+        - name: frontend
+          image: shashidas/eticket-frontend:v2.0
           ports:
             - containerPort: 3000
----
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-clusterip
+  name: frontend-service
+  namespace: eticket
 spec:
-  type: ClusterIP
   selector:
-    app.kubernetes.io/name: frontend
+    app: frontend
+  type: NodePort
   ports:
     - port: 3000
       targetPort: 3000
+      protocol: TCP
+      nodePort: 31000

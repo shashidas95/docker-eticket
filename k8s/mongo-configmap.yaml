@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-script
+  namespace: eticket
+data:
+  mongo-init.js: |
+    // MongoDB initialization script
+    var adminDB = db.getSiblingDB('admin');
+    adminDB.auth(process.env.MONGO_INITDB_ROOT_USERNAME, process.env.MONGO_INITDB_ROOT_PASSWORD);
+
+    var eticketDB = db.getSiblingDB('eticket');
+    eticketDB.createUser({
+      user: 'eticket',
+      pwd: 'eticket',
+      roles: [{ role: 'readWrite', db: 'eticket' }],
+    });
+
+    eticketDB.createCollection('buses');
+    eticketDB.createCollection('users');
+    eticketDB.createCollection('trips');
+
+    eticketDB.buses.insertMany(JSON.parse(cat('/data/eticket.buses.json')));
+    eticketDB.users.insertMany(JSON.parse(cat('/data/eticket.users.json')));
+    eticketDB.trips.insertMany(JSON.parse(cat('/data/eticket.trips.json')));
