@@ -11,7 +11,18 @@ var eticketDB = db.getSiblingDB('eticket');
 
 // Create the user with the desired username and password
 eticketDB.createUser({
-  user: "eticket",
-  pwd: "eticket",
-  roles: [{ role: "readWrite", db: "eticket" }]
+  user: 'eticket',
+  pwd: 'eticket',
+  roles: [{ role: 'readWrite', db: 'eticket' }],
 });
+
+// Create collections if they do not exist
+eticketDB.createCollection('buses');
+eticketDB.createCollection('users');
+eticketDB.createCollection('trips');
+
+// Insert initial data from JSON files
+// Ensure the JSON files are placed in a location that MongoDB can access (e.g., /tmp)
+eticketDB.buses.insertMany(JSON.parse(cat('/tmp/eticket.buses.json')));
+eticketDB.users.insertMany(JSON.parse(cat('/tmp/eticket.users.json')));
+eticketDB.trips.insertMany(JSON.parse(cat('/tmp/eticket.trips.json')));

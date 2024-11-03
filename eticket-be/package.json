@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "start": "node build/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "lint": "eslint . --ext .js --ext .ts",
     "clean": "rm -rf ./build && rm -f ./tsconfig.tsbuildinfo",
-    "build": "yarn clean && tsc"
+    "build": "yarn clean && tsc && cp -r src/mailer build/mailer"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.4",
